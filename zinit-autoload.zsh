@@ -713,16 +713,16 @@ ZINIT[EXTENDED_GLOB]=""
 
     [[ $1 = -q ]] && +zinit-message -n "{pre}[self-update]{msg2} Updating Zinit repository{msg2}"
 
-    last_head=$(git -C $ZINIT[BIN_DIR] symbolic-ref --quiet --short HEAD || git -C $ZINIT[BIN_DIR] rev-parse HEAD)
+    local last_head=$(git -C $ZINIT[BIN_DIR] symbolic-ref --quiet --short HEAD || git -C $ZINIT[BIN_DIR] rev-parse HEAD)
     git -C $ZINIT[BIN_DIR] checkout -q main -- || exit 1
-    last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse main)
+    local last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse main)
     printf "--- Updating Oh My Zsh"
     if LANG= git -C $ZINIT[BIN_DIR] pull --autostash --quiet --rebase origin main; then
       # Check if it was really updated or not
       if [[ "$(git -C $ZINIT[BIN_DIR] rev-parse HEAD)" = "$last_commit" ]]; then
-        message="--- Zinit is already at the latest version."
+        local message="--- Zinit is already at the latest version."
       else
-        message="--- Zinit has been updated!"
+        local message="--- Zinit has been updated!"
         # Save the commit prior to updating
         # Print changelog to the terminal
         # if [[ "$1" = --interactive ]]; then
@@ -742,6 +742,7 @@ ZINIT[EXTENDED_GLOB]=""
       printf "There was an error updating. Try again later?"
     fi
     git -C $ZINIT[BIN_DIR] checkout -q "$last_head" --
+    unset last_head last_commit message
     #
     # local nl=$'\n' escape=$'\x1b['
     # local CURRENT_BRANCH=$(git -C $ZINIT[BIN_DIR] rev-parse --abbrev-ref HEAD)
