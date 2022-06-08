@@ -727,7 +727,7 @@ ZINIT[EXTENDED_GLOB]=""
         # Save the commit prior to updating
         # Print changelog to the terminal
         # if [[ "$1" = --interactive ]]; then
-        zsh "$ZINIT[BIN_DIR]"/changelog.sh
+        zsh "$ZINIT[BIN_DIR]"/changelog.sh HEAD $last_commit
       fi
     else
       ret=$?
