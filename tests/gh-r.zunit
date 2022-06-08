@@ -144,6 +144,11 @@
   local dive="$ZBIN/dive"; assert "$dive" is_executable
   $dive --version; assert $state equals 0
 }
+@test 'deno' { # A tool for exploring each layer in a docker image
+  run zinit for @denoland/deno; assert $state equals 0
+  local deno="$ZBIN/deno"; assert "$deno" is_executable
+  $deno --version; assert $state equals 0
+}
 @test 'docker-buildx' { # A monitor of resources
   run zinit for as'completions' atclone'buildx* completion zsh > _buildx' lbin'!buildx-* -> buildx' @docker/buildx
   assert $state equals 0
@@ -400,6 +405,11 @@
   local just="$ZBIN/just"; assert "$just" is_executable
   $just --version; assert $state equals 0
 }
+@test 'kalker' { # kalker a command runner
+  run zinit for @PaddiM8/kalker; assert $state equals 0
+  local kalker="$ZBIN/kalker"; assert "$kalker" is_executable
+  $kalker 1+1; assert $state equals 0
+}
 @test 'keepassxc' { # a cross-platform community-driven port of the Windows application “Keepass Password Safe
   if [[ $OSTYPE =~ 'linux.*' ]]; then skip 'keepassxc test only ran on macOS'; fi
   run zinit for @keepassxreboot/keepassxc; assert $state equals 0
@@ -497,6 +507,11 @@ $kopia --version; assert $state equals 0
   run zinit for denisidoro/navi && assert $state equals 0
   local navi="$ZBIN/navi" && assert "$navi" is_executable
   $navi --version && assert $state equals 0
+}
+@test 'ncspot' { # Declarative, asynchronous routing for React
+  run zinit for hrkfdn/ncspot; assert $state equals 0
+  local ncspot="$ZBIN/ncspot"; assert "$ncspot" is_executable
+  $ncspot --version && assert $state equals 0
 }
 # @test 'neovim::appimage' { # Vim-fork focused on extensibility and usability
 #   run zinit bpick'*appimage*' id-as'neovim/appimage' for neovim/neovim
@@ -641,6 +656,11 @@ $kopia --version; assert $state equals 0
   local volta="$ZBIN/volta"; assert "$volta" is_executable
   run $volta --version; assert $state equals 0
 }
+@test 'wasmer' { # The personal information dashboard for your terminal
+  run zinit for wasmerio/wasmer; assert $state equals 0
+  local wasmer="$ZBIN/wasmer"; assert "$wasmer" is_executable
+  run $wasmer --version; assert $state equals 0
+}
 @test 'warp' { # Secure and simple terminal sharing
   ! [[ $OSTYPE =~ 'darwin*' ]] && skip 'Warp test skipped on Linux'
   run zinit lbin'!* -> warp' for spolu/warp; assert $state equals 0
@@ -682,6 +702,11 @@ $kopia --version; assert $state equals 0
   run zinit for @brimdata/zed; assert $state equals 0
   local zed="$ZBIN/zed"; assert "$zed" is_executable
   run $zed --version; assert $state equals 0
+}
+@test 'zellij' { # Tooling for super-structured data: a new and easier way to manipulate data
+  run zinit for @zellij-org/zellij; assert $state equals 0
+  local zellij="$ZBIN/zellij"; assert "$zellij" is_executable
+  run $zellij --version; assert $state equals 0
 }
 @test 'zoxide' { # A smarter cd command
   run zinit for @ajeetdsouza/zoxide; assert $state equals 0
