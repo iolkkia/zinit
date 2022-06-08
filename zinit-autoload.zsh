@@ -718,7 +718,7 @@ ZINIT[EXTENDED_GLOB]=""
     git -C $ZINIT[BIN_DIR] checkout -q main -- || exit 1
     local last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse $CURRENT_BRANCH)
     printf "--- Updating Zinit"
-    if LANG= git -C $ZINIT[BIN_DIR] pull --autostash --quiet --rebase origin main; then
+    if LANG= git -C $ZINIT[BIN_DIR] pull --autostash --quiet --rebase origin $CURRENT_BRANCH; then
       # Check if it was really updated or not
       if [[ "$(git -C $ZINIT[BIN_DIR] rev-parse HEAD)" = "$last_commit" ]]; then
         local message="--- Zinit is already at the latest version."
