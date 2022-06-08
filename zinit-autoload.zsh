@@ -711,30 +711,59 @@ ZINIT[EXTENDED_GLOB]=""
     builtin emulate -LR zsh ${=${options[xtrace]:#off}:+-o xtrace}
     setopt extendedglob typesetsilent warncreateglobal
 
-    [[ $1 = -q ]] && +zinit-message -n "{pre}[self-update]{msg2} Updating Zinit repository{msg2}" \
+    [[ $1 = -q ]] && +zinit-message -n "{pre}[self-update]{msg2} Updating Zinit repository{msg2}"
 
-    local nl=$'\n' escape=$'\x1b['
-    local CURRENT_BRANCH=$(git --git-dir $ZINIT[BIN_DIR] rev-parse --abbrev-ref HEAD)
-    local -a lines
-    +zinit-message -n "{pre}[self-update]{msg2} fetching latest changes from {cmd}$CURRENT_BRANCH$nl{rst}"
-    command git --git-dir $ZINIT[BIN_DIR] --quiet fetch
-    lines=( ${(f)$(git --git-dir $ZINIT[BIN_DIR] log --oneline --no-decorate ${CURRENT_BRANCH}..FETCH_HEAD) )
+    last_head=$(git -C $ZINIT[BIN_DIR] symbolic-ref --quiet --short HEAD || git -C $ZINIT[BIN_DIR] rev-parse HEAD)
+    git -C $ZINIT[BIN_DIR] checkout -q main -- || exit 1
+    last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse main)
+    printf "--- Updating Oh My Zsh"
+    if LANG= git -C $ZINIT[BIN_DIR] pull --autostash --quiet --rebase origin main; then
+      # Check if it was really updated or not
+      if [[ "$(git -C $ZINIT[BIN_DIR] rev-parse HEAD)" = "$last_commit" ]]; then
+        message="--- Zinit is already at the latest version."
+      else
+        message="--- Zinit has been updated!"
+        # Save the commit prior to updating
+        # Print changelog to the terminal
+        # if [[ "$1" = --interactive ]]; then
+        #   "$ZSH/tools/changelog.sh" HEAD "$last_commit"
+        # fi
+      fi
 
-    if (( ${#lines} > 0 )); then
-        builtin print -rl -- "${lines[@]}" | .zinit-pager
-        builtin print
+      printf '         __                                     __   \n'
+      printf '  ____  / /_     ____ ___  __  __   ____  _____/ /_  \n'
+      printf ' / __ \\/ __ \\   / __ `__ \\/ / / /  /_  / / ___/ __ \\ \n'
+      printf '/ /_/ / / / /  / / / / / / /_/ /    / /_(__  ) / / / \n'
+      printf '\\____/_/ /_/  /_/ /_/ /_/\\__, /    /___/____/_/ /_/  \n'
+      printf '                        /____/                       \n'
+      printf '\n'
+    else
+      ret=$?
+      printf "There was an error updating. Try again later?"
     fi
-
-    if [[ $1 != -q ]] {
-        command git --git-dir $ZINIT[BIN_DIR] pull --autostash --ff --no-stat origin "$CURRENT_BRANCH"
-    } else {
-        command git --git-dir $ZINIT[BIN_DIR] pull --autostash --ff --no-stat --quiet origin "$CURRENT_BRANCH"
-    }
-
-    if [[ $1 != -q ]] { +zinit-message "{pre}[self-update]{msg2} compiling zinit via {cmd}zcompile{rst}" }
-    command rm -f $ZINIT[BIN_DIR]/*.zwc(DN)
-    zcompile -U $ZINIT[BIN_DIR]/zinit{'','-additional','-autoload','-install','-side'}.zsh
-    zcompile -U $ZINIT[BIN_DIR]/share/git-process-output.zsh
+    git -C $ZINIT[BIN_DIR] checkout -q "$last_head" --
+    #
+    # local nl=$'\n' escape=$'\x1b['
+    # local CURRENT_BRANCH=$(git -C $ZINIT[BIN_DIR] rev-parse --abbrev-ref HEAD)
+    # local -a lines
+    # +zinit-message -n "{pre}[self-update]{msg2} fetching latest changes from {cmd}$CURRENT_BRANCH$nl{rst}"
+    # command git -C $ZINIT[BIN_DIR] fetch --quiet
+    # lines=( ${(f)$(command git -C $ZINIT[BIN_DIR] log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --no-decorate --abbrev-commit ${CURRENT_BRANCH}..FETCH_HEAD)} )
+    # if (( ${#lines} > 0 )); then
+    #     builtin print -rl -- "${lines[@]}" | .zinit-pager
+    #     builtin print
+    # fi
+    #
+    # if [[ $1 != -q ]] {
+    #     command git -C $ZINIT[BIN_DIR] pull --autostash --ff --no-stat --quiet origin "$CURRENT_BRANCH"
+    # } else {
+    #     command git -C $ZINIT[BIN_DIR] pull --autostash --ff --no-stat --quiet origin "$CURRENT_BRANCH"
+    # }
+    #
+    # if [[ $1 != -q ]] { +zinit-message "{pre}[self-update]{msg2} compiling zinit via {cmd}zcompile{rst}" }
+    # command rm -f $ZINIT[BIN_DIR]/*.zwc(DN)
+    # zcompile -U $ZINIT[BIN_DIR]/zinit{'','-additional','-autoload','-install','-side'}.zsh
+    # zcompile -U $ZINIT[BIN_DIR]/share/git-process-output.zsh
 
     # +zinit-message "{pre}[self-update]{msg2} resetting the repository via {cmd}${ICE[reset]:-git reset --hard HEAD}{rst}{…}"
 
