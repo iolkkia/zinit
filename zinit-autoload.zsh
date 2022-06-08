@@ -717,7 +717,7 @@ ZINIT[EXTENDED_GLOB]=""
     local last_head=$(git -C $ZINIT[BIN_DIR] symbolic-ref --quiet --short HEAD || git -C $ZINIT[BIN_DIR] rev-parse HEAD)
     git -C $ZINIT[BIN_DIR] checkout -q main -- || exit 1
     local last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse $CURRENT_BRANCH)
-    printf "--- Updating Oh My Zsh"
+    printf "--- Updating Zinit"
     if LANG= git -C $ZINIT[BIN_DIR] pull --autostash --quiet --rebase origin main; then
       # Check if it was really updated or not
       if [[ "$(git -C $ZINIT[BIN_DIR] rev-parse HEAD)" = "$last_commit" ]]; then
@@ -727,17 +727,8 @@ ZINIT[EXTENDED_GLOB]=""
         # Save the commit prior to updating
         # Print changelog to the terminal
         # if [[ "$1" = --interactive ]]; then
-        "$ZINIT[BIN_DIR]/scripts/changelog.sh" HEAD "$last_commit"
-        # fi
+        "$ZINIT[BIN_DIR]"/scripts/changelog.sh HEAD "$last_commit"
       fi
-
-      printf '         __                                     __   \n'
-      printf '  ____  / /_     ____ ___  __  __   ____  _____/ /_  \n'
-      printf ' / __ \\/ __ \\   / __ `__ \\/ / / /  /_  / / ___/ __ \\ \n'
-      printf '/ /_/ / / / /  / / / / / / /_/ /    / /_(__  ) / / / \n'
-      printf '\\____/_/ /_/  /_/ /_/ /_/\\__, /    /___/____/_/ /_/  \n'
-      printf '                        /____/                       \n'
-      printf '\n'
     else
       ret=$?
       printf "There was an error updating. Try again later?"
