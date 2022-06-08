@@ -711,11 +711,12 @@ ZINIT[EXTENDED_GLOB]=""
     builtin emulate -LR zsh ${=${options[xtrace]:#off}:+-o xtrace}
     setopt extendedglob typesetsilent warncreateglobal
 
+    local CURRENT_BRANCH=$(git -C $ZINIT[BIN_DIR] rev-parse --abbrev-ref HEAD)
     [[ $1 = -q ]] && +zinit-message -n "{pre}[self-update]{msg2} Updating Zinit repository{msg2}"
 
     local last_head=$(git -C $ZINIT[BIN_DIR] symbolic-ref --quiet --short HEAD || git -C $ZINIT[BIN_DIR] rev-parse HEAD)
     git -C $ZINIT[BIN_DIR] checkout -q main -- || exit 1
-    local last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse main)
+    local last_commit=$(git -C $ZINIT[BIN_DIR] rev-parse $CURRENT_BRANCH)
     printf "--- Updating Oh My Zsh"
     if LANG= git -C $ZINIT[BIN_DIR] pull --autostash --quiet --rebase origin main; then
       # Check if it was really updated or not
@@ -745,7 +746,6 @@ ZINIT[EXTENDED_GLOB]=""
     unset last_head last_commit message
     #
     # local nl=$'\n' escape=$'\x1b['
-    # local CURRENT_BRANCH=$(git -C $ZINIT[BIN_DIR] rev-parse --abbrev-ref HEAD)
     # local -a lines
     # +zinit-message -n "{pre}[self-update]{msg2} fetching latest changes from {cmd}$CURRENT_BRANCH$nl{rst}"
     # command git -C $ZINIT[BIN_DIR] fetch --quiet
